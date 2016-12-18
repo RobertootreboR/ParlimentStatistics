@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ParlimentStatistics.iml" filepath="$PROJECT_DIR$/.idea/modules/ParlimentStatistics.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ParlimentStatistics_main.iml" filepath="$PROJECT_DIR$/.idea/modules/ParlimentStatistics_main.iml" group="ParlimentStatistics" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ParlimentStatistics_test.iml" filepath="$PROJECT_DIR$/.idea/modules/ParlimentStatistics_test.iml" group="ParlimentStatistics" />
+    </modules>
+  </component>
+</project>
