@@ -14,18 +14,20 @@ public class DeputyData {
 
     public DeputyData(ParsingDetails details) throws IOException {
         JSONGetter JSONgetter = new JSONGetter();
-        String deputiesStr = JSONgetter.getJSON("https://api-v3.mojepanstwo.pl/dane/poslowie.json");
-        JSONObject deputiesJSON = new JSONObject(deputiesStr);
-        JSONArray deputiesArray = deputiesJSON.getJSONArray("Dataobject");
-        for (int i = 0; i < 49; i++) {
-            String deputyName = deputiesArray
-                    .optJSONObject(i)               // take object under index i (which is a map)
-                    .getString("slug");             // get the value corresponding to the key "slug" - which is a name
+        String deputiesStr = JSONgetter.getJSON("https://api-v3.mojepanstwo.pl/dane/poslowie.json?conditions[poslowie.kadencja]="+details.cadence);
+        new JSONObject(deputiesStr)                                            // make a JSONObject from the downloaded string
+                .getJSONArray("Dataobject")                                    // take an array from the "DataObject" key
+                .forEach(e->                                                  // for each object (which is deputy info) in the array
+                        deputies.add(                                          // add to the "deputies" list
+                                new Deputy(getDeputyName(e),getDeputyID(e)))); // deputy's name and his ID
 
-            Integer deputyID = Integer.parseInt(deputiesArray
-                            .optJSONObject(i)
-                            .getString("id"));
-            deputies.add(new Deputy(deputyName,deputyID));
-        }
+    }
+    private String getDeputyName(Object deputy){
+            JSONObject dep = (JSONObject) deputy;
+            return dep.getString("slug");
+    }
+    private Integer getDeputyID(Object deputy){
+            JSONObject dep = (JSONObject) deputy;
+            return Integer.parseInt(dep.getString("id"));
     }
 }

@@ -3,6 +3,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.LinkedList;
 
 /**
  * Created by robert on 15.12.16.
@@ -14,14 +15,7 @@ public class App {
 
             ParsingDetails details = new ArgumentParser().parseArguments(args);
             DeputyData deputyData = new DeputyData(details);
-            for(Deputy deputy : deputyData.deputies)
-                System.out.println(deputy.name);
-
-
-
-
-
-
+            deputyData.deputies.forEach(System.out::println);
 
 
         } catch (IOException ex) {

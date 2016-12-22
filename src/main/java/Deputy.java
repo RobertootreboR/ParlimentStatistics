@@ -17,8 +17,12 @@ public class Deputy {
         this.name=name;
         this.ID = ID;
     }
-    // Enable third name in constructor (Middle name)!!!!!!!!!!
 
+
+    @Override
+    public String toString(){
+        return "name: " + this.name + " id: " + this.ID;
+    }
 
 
 }
