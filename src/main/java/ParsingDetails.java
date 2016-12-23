@@ -12,6 +12,10 @@ public class ParsingDetails {
         this.cadence =cadence;
     }
 
+    public void updateIDs(DeputyData deputyData) {
+        expenseSum.ID=deputyData.getDeputyID(expenseSum.name);
+        minorFixesExpenses.ID =deputyData.getDeputyID(minorFixesExpenses.name);
+    }
 }
 
 
