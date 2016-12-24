@@ -1,9 +1,6 @@
-import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.LinkedList;
 
 /**
  * Created by robert on 15.12.16.
@@ -14,18 +11,18 @@ public class App {
         try {
             final long startTime = System.currentTimeMillis();
             ParsingDetails details = new ArgumentParser().parseArguments(args);
-            DeputyData deputyData = new DeputyData(details);
+            DeputyPersonalData deputyPersonalData = new DeputyPersonalData(details);
 
-            deputyData.deputies.forEach(System.out::println);
-            details.updateIDs(deputyData);
+            deputyPersonalData.deputies.forEach(System.out::println);
+            details.updateIDs(deputyPersonalData);
 
             final long midlleTime = System.currentTimeMillis();
             System.out.println("Total execution time: " + (midlleTime - startTime) );
 
-            System.out.println(deputyData.getDeputyID(deputyData.deputies.get(0).name));
-            System.out.println(deputyData.getDeputyID(deputyData.deputies.get(1).name));
-            ExpensesData expensesData = new ExpensesData(deputyData);
-            System.out.println(expensesData.expensesMap.get(1131));
+            System.out.println(deputyPersonalData.getDeputyID(deputyPersonalData.deputies.get(0).name));
+            System.out.println(deputyPersonalData.getDeputyID(deputyPersonalData.deputies.get(1).name));
+            DeputyData expensesData = new DeputyData(deputyPersonalData);
+            System.out.println(expensesData.deputyDataMap.get(1131));
             final long endTime = System.currentTimeMillis();
             System.out.println(" execution time normal: " + (endTime - midlleTime));
 
@@ -34,6 +31,10 @@ public class App {
             System.out.println(new ExpensesStats(details.expenseSum.ID,details.minorFixesExpenses.ID,expensesData).deputyMinorFixes);
             System.out.println(new ExpensesStats(details.expenseSum.ID,details.minorFixesExpenses.ID,expensesData).deputyExpenseSum);
             System.out.println(new ExpensesStats(details.expenseSum.ID,details.minorFixesExpenses.ID,expensesData).averageSum);
+            System.out.println(expensesData.deputyDataMap.get(130).getJSONObject("wyjazdy").toString());
+            if(expensesData.deputyDataMap.get(130).getJSONObject("wyjazdy").toString().equals("{}")) System.out.println("yaaay");
+            Integer podroznik = new TravelsStats(expensesData).mostForeignJourneysID;
+            System.out.println(deputyPersonalData.getDeputy(podroznik));
 
 
 
