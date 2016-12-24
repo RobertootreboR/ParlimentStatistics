@@ -36,6 +36,7 @@ public class App {
             System.out.println(new ExpensesStats(details.expenseSum.ID,details.minorFixesExpenses.ID,expensesData).averageSum);
 
 
+
         } catch (IOException ex) {
             System.out.println(ex);
         } catch (JSONException ex) {

@@ -11,11 +11,11 @@ import java.util.List;
 public class ExpensesStats {
     Double deputyExpenseSum;
     Double deputyMinorFixes;
-    Double averageSum=0.0;
+    Double averageSum;
 
     ExpensesStats(Integer deputyToCountExpenseID, Integer deputyToCountMinorFixesID, ExpensesData expensesData) {
         this.deputyMinorFixes = deputyMinorFixesCount(deputyToCountMinorFixesID, expensesData);
-        this.deputyExpenseSum = deputyExpenseSum(deputyToCountExpenseID.doubleValue(), expensesData);
+        this.deputyExpenseSum = deputyExpenseSum(deputyToCountExpenseID, expensesData);
         this.averageSum = averageSumCount(expensesData);
 
     }
@@ -52,8 +52,7 @@ public class ExpensesStats {
         return result;
     }
 
-    private double deputyExpenseSum(Double deputyToCountExpenseIDD, ExpensesData expensesData) {
-        Integer deputyToCountExpenseID = deputyToCountExpenseIDD.intValue();
+    private Double deputyExpenseSum(Integer deputyToCountExpenseID, ExpensesData expensesData) {
         Double result = 0.0;
         int yearCounter = expensesData
                 .expensesMap
@@ -61,31 +60,31 @@ public class ExpensesStats {
                 .getInt("liczba_rocznikow");
 
         for (int i = 0; i < yearCounter; i++) {
-            List<Object> list = expensesData
+            result += expensesData
                     .expensesMap
                     .get(deputyToCountExpenseID)
                     .getJSONArray("roczniki")
                     .optJSONObject(i)
                     .getJSONArray("pola")
-                    .toList();                  // sprobować z optional!!!!!!!!!!!!!!!
-
-            for (Object object : list)
-                result += Double.parseDouble((String) object);
-
+                    .toList()
+                    .stream()
+                    .map(String.class::cast)
+                    .mapToDouble(Double::parseDouble)
+                    .sum();
         }
         return result;
     }
 
 
-    private Double averageSumCount(ExpensesData expensesData){
+    private Double averageSumCount(ExpensesData expensesData) {
         return expensesData.expensesMap
                 .keySet()
                 .stream()
-                .mapToDouble(e -> e)
-                .reduce(0.0,(acc,e) -> acc + deputyExpenseSum(e,expensesData))
-                /expensesData.expensesMap.size();  //brzydkie rzutowania!! ogarnąć je jakoś albo bez strumienia robić
+                .map(Integer.class::cast)
+                .mapToDouble(e -> deputyExpenseSum(e, expensesData))
+                .sum()
+                / expensesData.expensesMap.size();
     }
-
 
 
 }
