@@ -1,17 +1,12 @@
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-
 /**
  * Created by robert on 15.12.16.
  */
 public class ExpensesStats {
-    DeputyData expensesData;
+    private DeputyData expensesData;
 
     ExpensesStats(DeputyData expensesData) {
         this.expensesData = expensesData;
     }
-
 
     Double getDeputyMinorFixesSum(Integer deputyID) {
         Double result = 0.0;
@@ -41,7 +36,6 @@ public class ExpensesStats {
         }
         return result;
     }
-
 
     Double getAverageExpenseSum() {
         return expensesData.deputyDataMap
