@@ -6,55 +6,33 @@ import org.json.JSONObject;
  * Created by robert on 15.12.16.
  */
 public class ExpensesStats {
-    Double deputyExpenseSum;
-    Double deputyMinorFixes;
-    Double averageSum;
+    DeputyData expensesData;
 
-    ExpensesStats(Integer deputyToCountExpenseID, Integer deputyToCountMinorFixesID, DeputyData expensesData) {
-        this.deputyMinorFixes = getDeputyMinorFixesSum(deputyToCountMinorFixesID, expensesData);
-        this.deputyExpenseSum = getDeputyExpenseSum(deputyToCountExpenseID, expensesData);
-        this.averageSum = getAverageExpenseSum(expensesData);// zmieniać to expenses data???
-
+    ExpensesStats(DeputyData expensesData) {
+        this.expensesData = expensesData;
     }
 
 
-    private Double getDeputyMinorFixesSum(Integer deputyToCountMinorFixesID, DeputyData expensesData) {
-        int minorFixesNumber = -1;
+    Double getDeputyMinorFixesSum(Integer deputyID) {
         Double result = 0.0;
-        int yearCounter = expensesData.getLiczbaRocznikow(deputyToCountMinorFixesID);
-        JSONArray punktyArray = expensesData.getPunktyArray(deputyToCountMinorFixesID);
-
-        for (Object object : punktyArray) {
-            if (((JSONObject) object).getString("tytul").equals("Koszty drobnych napraw i remontów lokalu biura poselskiego"))
-                minorFixesNumber = ((JSONObject) object).getInt("numer");
-        }
-
+        int yearCounter = expensesData.getLiczbaRocznikow(deputyID);
+        int minorFixesIndex = expensesData.getMinorFixesIndex(deputyID);
 
         for (int i = 0; i < yearCounter; i++) {
             result += expensesData
-                    .deputyDataMap
-                    .get(deputyToCountMinorFixesID)
-                    .getJSONObject("wydatki")
-                    .getJSONArray("roczniki")
-                    .optJSONObject(i)
-                    .getJSONArray("pola")
-                    .optDouble(minorFixesNumber - 1);
+                    .getPolaArrayFromRocznikiAt(i, deputyID)   // roczniki[i] -> pola
+                    .optDouble(minorFixesIndex - 1);          // pola[i]
         }
         return result;
     }
 
-    private Double getDeputyExpenseSum(Integer deputyToCountExpenseID, DeputyData expensesData) {
+    Double getDeputyExpenseSum(Integer deputyID) {
         Double result = 0.0;
-        int yearCounter = expensesData.getLiczbaRocznikow(deputyToCountExpenseID);
+        int yearCounter = expensesData.getLiczbaRocznikow(deputyID);
 
         for (int i = 0; i < yearCounter; i++) {
             result += expensesData
-                    .deputyDataMap
-                    .get(deputyToCountExpenseID)
-                    .getJSONObject("wydatki")
-                    .getJSONArray("roczniki")
-                    .optJSONObject(i)
-                    .getJSONArray("pola")               // da się dać do funkcjii?? uzyte dwukrotnie!!!
+                    .getPolaArrayFromRocznikiAt(i, deputyID)
                     .toList()
                     .stream()
                     .map(String.class::cast)
@@ -65,11 +43,11 @@ public class ExpensesStats {
     }
 
 
-    private Double getAverageExpenseSum(DeputyData expensesData) {
+    Double getAverageExpenseSum() {
         return expensesData.deputyDataMap
                 .keySet()
                 .stream()
-                .mapToDouble(e -> getDeputyExpenseSum(e, expensesData))
+                .mapToDouble(this::getDeputyExpenseSum)
                 .sum()
                 / expensesData.deputyDataMap.size();
     }

@@ -1,6 +1,8 @@
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by robert on 15.12.16.
@@ -28,13 +30,25 @@ public class App {
 
 
 
-            System.out.println(new ExpensesStats(details.expenseSum.ID,details.minorFixesExpenses.ID,expensesData).deputyMinorFixes);
-            System.out.println(new ExpensesStats(details.expenseSum.ID,details.minorFixesExpenses.ID,expensesData).deputyExpenseSum);
-            System.out.println(new ExpensesStats(details.expenseSum.ID,details.minorFixesExpenses.ID,expensesData).averageSum);
+            ExpensesStats exStats = new ExpensesStats(expensesData);
+            Double xx = 0.0;
+            System.out.println(exStats.getDeputyMinorFixesSum(details.minorFixesExpenses.ID));
+            System.out.println(exStats.getDeputyExpenseSum(details.expenseSum.ID));
+            System.out.println(exStats.getAverageExpenseSum());
+
+
             System.out.println(expensesData.deputyDataMap.get(130).getJSONObject("wyjazdy").toString());
-            if(expensesData.deputyDataMap.get(130).getJSONObject("wyjazdy").toString().equals("{}")) System.out.println("yaaay");
-            Integer podroznik = new TravelsStats(expensesData).mostForeignJourneysID;
+            TravelsStats deputy =new TravelsStats(expensesData);
+            Integer podroznik = deputy.getMostForeignJourneysDeputyID();
             System.out.println(deputyPersonalData.getDeputy(podroznik));
+            podroznik = deputy.getLongestJourneyDeputyID();
+            System.out.println(deputyPersonalData.getDeputy(podroznik));
+            podroznik = deputy.getMostExpensiveJourneyDeputyID();
+            System.out.println(deputyPersonalData.getDeputy(podroznik));
+            podroznik = deputy.getLongestAbroadDeputyID();
+            System.out.println(deputyPersonalData.getDeputy(podroznik));
+            List<Integer> italy = deputy.getWhoVisitedItaly();
+            italy.forEach(System.out::println);
 
 
 
