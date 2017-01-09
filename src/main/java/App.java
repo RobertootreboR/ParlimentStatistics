@@ -14,37 +14,29 @@ public class App {
     public static void main(String[] args) {
 
         try {
-
-            final long startTime = System.currentTimeMillis();
+            //final long startTime = System.currentTimeMillis();
             ParsingDetails details = new ArgumentParser().parseArguments(args);
-            //new DataDownloader().run(7);
-            DeputyPersonalData deputyPersonalData = new DeputyPersonalData(details);
-            details.updateIDs(deputyPersonalData);
 
-            final long midlleTime = System.currentTimeMillis();
-            System.out.println("after uploading deputy personal data: " + (midlleTime - startTime));
+            if (details.mode == ParsingDetails.Mode.UpdateData)
+                new DataDownloader().go(details.cadence);
+            else {
+                DeputyPersonalData deputyPersonalData = new DeputyPersonalData(details);
+                details.updateIDs(deputyPersonalData);
+                DeputyData deputyData = new DeputyData(deputyPersonalData);
+                displayStats(details, deputyData, deputyPersonalData);
+                //final long endTime = System.currentTimeMillis();
+                //System.out.println(" at the end: " + (endTime- startTime));
 
-            DeputyData expensesData = new DeputyData(deputyPersonalData);
-            final long endTime = System.currentTimeMillis();
-            System.out.println(" at the end: " + (endTime- startTime));
-
-            displayStats(details, expensesData, deputyPersonalData);
-
-            final long endEndTime = System.currentTimeMillis();
-            System.out.println(" at the end: " + (endEndTime - endTime));
-
-
+            }
         } catch (IOException ex) {
-            System.out.println(ex);
-        } catch (JSONException ex) {
+            System.out.println(ex );
+        } catch (JSONException ex ) {  //add something more in expensesdata and traveldata
             System.out.println(ex);
         } catch (NumberFormatException ex) {
             System.out.println("first argument has to be a number. 7 or 8." + ex);
         } catch (IllegalArgumentException ex) {
             System.out.println(ex);
         }
-
-
 
 
     }

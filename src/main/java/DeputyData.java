@@ -15,21 +15,19 @@ import java.util.stream.Stream;
 public class DeputyData {
     ConcurrentHashMap<Integer, JSONObject> deputyDataMap = new ConcurrentHashMap<>();
 
-    DeputyData(DeputyPersonalData deputyPersonalData) {
-        deputyPersonalData.deputies
-                .forEach(e -> deputyDataMap.put(e.ID, loadExpensesData(e.ID)));
+    DeputyData(DeputyPersonalData deputyPersonalData) throws IOException{
+        for(Deputy deputy :deputyPersonalData.deputies)
+                deputyDataMap.put(deputy.ID, loadExpensesData(deputy.ID));
     }
 
-    private JSONObject loadExpensesData(Integer ID) {
+    private JSONObject loadExpensesData(Integer ID) throws IOException{
         try {
             String file = Files.lines(Paths.get("/home/robert/Sejm/Deputies/Deputy" + ID)).reduce("", String::concat);
             return new JSONObject(file)
                     .getJSONObject("layers");
         } catch (IOException ex) {
         }
-        return new JSONObject("{}");
-
-
+        throw new IOException("couldn't open one of Deputies files");
     }
 
     int getLiczbaRocznikow(Integer deputyID) {

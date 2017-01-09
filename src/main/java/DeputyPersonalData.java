@@ -1,4 +1,3 @@
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -6,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by robert on 16.12.16.
@@ -15,14 +13,13 @@ public class DeputyPersonalData {
     List<Deputy> deputies = new LinkedList<Deputy>();
 
     DeputyPersonalData(ParsingDetails details) throws IOException {
-        int numberOfSets = DataDownloader.getHowMany(details.cadence);
+        int numberOfSets = DataDownloader.getDatasetsNumber(details.cadence);
         for(int i =1; i<=numberOfSets; i++)
         this.deputies.addAll(fillList(loadDeputyData(details.cadence,i)));
     }
     DeputyPersonalData(String deputiesStr) throws IOException {     // used in save mode
         this.deputies = fillList(deputiesStr);
     }
-
 
     private String loadDeputyData(Integer cadence, Integer datasetNum) throws IOException {
             return Files.lines(Paths.get("/home/robert/Sejm/DeputyDataSets/DeputySet"+ cadence+"_"+datasetNum)).reduce("",String::concat);
@@ -38,7 +35,6 @@ public class DeputyPersonalData {
         return deputiesTMP;
     }
 
-
     private String getDeputyName(Object deputy) {
         JSONObject dep = (JSONObject) deputy;   // dodaćobsługę błędóW!
         return dep.getString("slug");
@@ -50,7 +46,6 @@ public class DeputyPersonalData {
                 return deputy;
         throw new IllegalArgumentException("Deputy ID " + ID + " is invalid. Try again");
     }
-
 
     private Integer getDeputyID(Object deputy) {
         JSONObject dep = (JSONObject) deputy;

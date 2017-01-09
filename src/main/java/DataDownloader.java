@@ -8,10 +8,15 @@ import java.io.PrintWriter;
  */
 public class DataDownloader {
 
-    public void run(Integer cadence) throws IOException{
-        Integer  x =getHowMany(cadence);
-        for(int i=1; i<=x; i++){
-            save(cadence,i);
+    public void go(Integer cadence) throws IOException{
+        Integer datasets = getDatasetsNumber(cadence);
+
+        for(int i=1; i<=datasets; i++){
+            final int y =i;
+            new Thread(() -> {
+                                try {
+                                    save(cadence,y);
+                                    }catch(IOException ex){ System.out.println("Couldn't save dataset number" + y + "from cadence" + cadence +". " + ex);}}).start();
         }
     }
 
@@ -41,7 +46,7 @@ public class DataDownloader {
         writer.close();
     }
 
-    public static Integer getHowMany(Integer cadence) throws IOException{
+    public static Integer getDatasetsNumber(Integer cadence) throws IOException{
         JSONObject object = new JSONObject(
                                     new JSONGetter()
                                     .getJSON("https://api-v3.mojepanstwo.pl/dane/poslowie.json?conditions[poslowie.kadencja]="+cadence)

@@ -17,8 +17,9 @@ public class ParsingDetails {
         this.cadence =cadence;
     }
 
-    public ParsingDetails(Mode mode) {
+    public ParsingDetails(Mode mode, Integer cadence) {
         this.mode = mode;
+        this.cadence =cadence;
     }
 
     public void updateIDs(DeputyPersonalData deputyPersonalData) {

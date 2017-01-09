@@ -4,7 +4,10 @@
 public class ArgumentParser {
 
     ParsingDetails parseArguments(String[] args) {
-        if(args.length ==1 && args[0].equals("-u")) return new ParsingDetails(ParsingDetails.Mode.UpdateData);
+        if(args.length ==2
+                && args[0].equals("-u")
+                &&(Integer.parseInt(args[1]) == 7 || Integer.parseInt(args[1]) ==8))
+                    return new ParsingDetails(ParsingDetails.Mode.UpdateData, Integer.parseInt(args[1]));
         if (args.length < 5)
             throw new IllegalArgumentException("Arguments shall be like: [7-8] firstname1 lastname1 firstname2 lastname2");
 
