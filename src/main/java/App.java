@@ -1,8 +1,11 @@
 import org.json.JSONException;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by robert on 15.12.16.
@@ -11,26 +14,21 @@ public class App {
     public static void main(String[] args) {
 
         try {
+
             final long startTime = System.currentTimeMillis();
             ParsingDetails details = new ArgumentParser().parseArguments(args);
+            //new DataDownloader().run(7);
             DeputyPersonalData deputyPersonalData = new DeputyPersonalData(details);
-
-            deputyPersonalData.deputies.forEach(System.out::println);
             details.updateIDs(deputyPersonalData);
 
             final long midlleTime = System.currentTimeMillis();
-            System.out.println("after downloading deputy personal data: " + (midlleTime - startTime));
+            System.out.println("after uploading deputy personal data: " + (midlleTime - startTime));
 
-            System.out.println(deputyPersonalData.getDeputyID(deputyPersonalData.deputies.get(0).name));
-            System.out.println(deputyPersonalData.getDeputyID(deputyPersonalData.deputies.get(1).name));
             DeputyData expensesData = new DeputyData(deputyPersonalData);
-            System.out.println(expensesData.deputyDataMap.get(1131));
             final long endTime = System.currentTimeMillis();
-            System.out.println(" at the end: " + (endTime - midlleTime));
+            System.out.println(" at the end: " + (endTime- startTime));
 
-            displayStats(details, expensesData,deputyPersonalData);
-
-            System.out.println(expensesData.deputyDataMap.get(130).getJSONObject("wyjazdy").toString());
+            displayStats(details, expensesData, deputyPersonalData);
 
             final long endEndTime = System.currentTimeMillis();
             System.out.println(" at the end: " + (endEndTime - endTime));
@@ -47,6 +45,8 @@ public class App {
         }
 
 
+
+
     }
 
     private static void displayStats(ParsingDetails details, DeputyData data, DeputyPersonalData deputyPersonalData) {
@@ -58,11 +58,13 @@ public class App {
         TravelsStats trStats = new TravelsStats(data);
         System.out.println(" trips-most foreign journeys. " + deputyPersonalData.getDeputy(trStats.getMostForeignJourneysDeputyID()));
         System.out.println(" days -longest journey. " + deputyPersonalData.getDeputy(trStats.getLongestJourneyDeputyID()));
-        System.out.println(" Longest abroad: "+deputyPersonalData.getDeputy(trStats.getLongestAbroadDeputyID()));
-        System.out.println(" -most expensive Journey. "+deputyPersonalData.getDeputy(trStats.getMostExpensiveJourneyDeputyID()));
+        System.out.println(" Longest abroad: " + deputyPersonalData.getDeputy(trStats.getLongestAbroadDeputyID()));
+        System.out.println(" -most expensive Journey. " + deputyPersonalData.getDeputy(trStats.getMostExpensiveJourneyDeputyID()));
         System.out.println("\nDeputies, who visited Italy:");
-        trStats.getWhoVisitedItaly().forEach(e ->System.out.println("\t"+deputyPersonalData.getDeputy(e)));
+        trStats.getWhoVisitedItaly().forEach(e -> System.out.println("\t" + deputyPersonalData.getDeputy(e)));
     }
+
+
 }
 
 

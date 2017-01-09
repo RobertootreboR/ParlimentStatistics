@@ -1,6 +1,10 @@
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
@@ -12,18 +16,20 @@ public class DeputyData {
     ConcurrentHashMap<Integer, JSONObject> deputyDataMap = new ConcurrentHashMap<>();
 
     DeputyData(DeputyPersonalData deputyPersonalData) {
-        deputyPersonalData.deputies.parallelStream()
-                .forEach(deputy -> deputyDataMap.put(deputy.ID, downloadExpensesData(deputy.ID)));
+        deputyPersonalData.deputies
+                .forEach(e -> deputyDataMap.put(e.ID, loadExpensesData(e.ID)));
     }
 
-    private JSONObject downloadExpensesData(Integer ID) {
+    private JSONObject loadExpensesData(Integer ID) {
         try {
-            return new JSONObject(new JSONGetter().getJSON("https://api-v3.mojepanstwo.pl/dane/poslowie/" + ID + ".json?layers[]=wydatki&layers[]=wyjazdy"))
+            String file = Files.lines(Paths.get("/home/robert/Sejm/Deputies/Deputy" + ID)).reduce("", String::concat);
+            return new JSONObject(file)
                     .getJSONObject("layers");
         } catch (IOException ex) {
-            System.out.print(ex + "cos nie tak z pobieraniem expensow :( ");
-            return new JSONObject("");   //brzyyyyydkoooooo! coś z tym zrobić :(
         }
+        return new JSONObject("{}");
+
+
     }
 
     int getLiczbaRocznikow(Integer deputyID) {
@@ -33,7 +39,7 @@ public class DeputyData {
                 .getInt("liczba_rocznikow");
     }
 
-    JSONArray getPunktyArray(Integer deputyID) {
+    private JSONArray getPunktyArray(Integer deputyID) {
         return deputyDataMap
                 .get(deputyID)
                 .getJSONObject("wydatki")
@@ -44,7 +50,7 @@ public class DeputyData {
         if (isWyjazdyArrayEmpty(deputyID))
             return 0;
         else {
-            Long journeys = getFromWyjazdyArrayAsStream("kraj",deputyID)
+            Long journeys = getFromWyjazdyArrayAsStream("kraj", deputyID)
                     .filter(country -> !country.equals("Polska"))
                     .count();
             return journeys.intValue();
@@ -77,8 +83,8 @@ public class DeputyData {
                 .toList()
                 .stream()
                 .map(HashMap.class::cast)
-                .filter(e-> e.get("tytul").equals("Koszty drobnych napraw i remontów lokalu biura poselskiego"))
-                .map(e-> e.get("numer"))
+                .filter(e -> e.get("tytul").equals("Koszty drobnych napraw i remontów lokalu biura poselskiego"))
+                .map(e -> e.get("numer"))
                 .map(String.class::cast)
                 .mapToInt(Integer::parseInt)
                 .sum();  //there is only one such element, so sum will just return it
@@ -88,7 +94,7 @@ public class DeputyData {
         if (isWyjazdyArrayEmpty(deputyID))
             return 0;
         else
-            return getFromWyjazdyArrayAsStream("liczba_dni",deputyID)
+            return getFromWyjazdyArrayAsStream("liczba_dni", deputyID)
                     .mapToInt(Integer::parseInt)
                     .reduce(0, Integer::max);
     }
@@ -97,7 +103,7 @@ public class DeputyData {
         if (isWyjazdyArrayEmpty(deputyID))
             return 0;
         else
-            return getFromWyjazdyArrayAsStream("liczba_dni",deputyID)
+            return getFromWyjazdyArrayAsStream("liczba_dni", deputyID)
                     .mapToInt(Integer::parseInt)
                     .sum();
     }
@@ -106,7 +112,7 @@ public class DeputyData {
         if (isWyjazdyArrayEmpty(deputyID))
             return 0.0;
         else
-            return getFromWyjazdyArrayAsStream("koszt_suma",deputyID)
+            return getFromWyjazdyArrayAsStream("koszt_suma", deputyID)
                     .mapToDouble(Double::parseDouble)
                     .reduce(0, Double::max);
     }
@@ -114,11 +120,12 @@ public class DeputyData {
     boolean visitedItaly(Integer deputyID) {
         return !isWyjazdyArrayEmpty(deputyID)
                 &&
-                getFromWyjazdyArrayAsStream("kraj",deputyID)
+                getFromWyjazdyArrayAsStream("kraj", deputyID)
                         .filter(country -> country.equals("Włochy"))
                         .count() != 0;
     }
-    private Stream<String> getFromWyjazdyArrayAsStream(String field, Integer deputyID){
+
+    private Stream<String> getFromWyjazdyArrayAsStream(String field, Integer deputyID) {
         return getWyjazdyArray(deputyID)
                 .toList()
                 .stream()
@@ -126,4 +133,6 @@ public class DeputyData {
                 .map(e -> e.get(field))
                 .map(String.class::cast);
     }
+
+
 }

@@ -15,15 +15,16 @@ public class TravelsStats {
     Integer getMostForeignJourneysDeputyID() {
         return getDeputyIDWithMost(deputyID -> travelData.numberOfJourneys(deputyID));
     }
-    Integer getLongestJourneyDeputyID(){
-        return getDeputyIDWithMost(deputyID ->travelData.longestJourneyDuration(deputyID));
+
+    Integer getLongestJourneyDeputyID() {
+        return getDeputyIDWithMost(deputyID -> travelData.longestJourneyDuration(deputyID));
     }
 
-    Integer getLongestAbroadDeputyID(){
+    Integer getLongestAbroadDeputyID() {
         return getDeputyIDWithMost(deputyID -> travelData.daysAbroad(deputyID));
     }
 
-    private Integer getDeputyIDWithMost(Function<Integer,Integer> computation) {
+    private Integer getDeputyIDWithMost(Function<Integer, Integer> computation) {
         Integer max = 0;
         Integer maxID = 0;
         for (Integer deputyID : travelData.deputyDataMap.keySet()) {
