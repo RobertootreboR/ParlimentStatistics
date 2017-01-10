@@ -1,6 +1,7 @@
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /**
  * Created by robert on 18.12.16.
@@ -48,7 +49,6 @@ public class TravelsStats {
                 max = tmp;
             }
         }
-        System.out.print("max: " + max + " PLN ");
         return maxID;
     }
 

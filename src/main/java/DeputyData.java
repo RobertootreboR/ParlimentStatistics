@@ -13,16 +13,16 @@ import java.util.stream.Stream;
  * Created by robert on 15.12.16.
  */
 public class DeputyData {
-    ConcurrentHashMap<Integer, JSONObject> deputyDataMap = new ConcurrentHashMap<>();
+    HashMap<Integer, JSONObject> deputyDataMap = new HashMap<>();
 
-    DeputyData(DeputyPersonalData deputyPersonalData) throws IOException{
-        for(Deputy deputy :deputyPersonalData.deputies)
-                deputyDataMap.put(deputy.ID, loadExpensesData(deputy.ID));
+    DeputyData(DeputyPersonalData deputyPersonalData, ParsingDetails details) throws IOException {
+        for (Deputy deputy : deputyPersonalData.deputies)
+            deputyDataMap.put(deputy.ID, loadExpensesData(deputy.ID, details));
     }
 
-    private JSONObject loadExpensesData(Integer ID) throws IOException{
+    private JSONObject loadExpensesData(Integer ID, ParsingDetails details) throws IOException {
         try {
-            String file = Files.lines(Paths.get("/home/robert/Sejm/Deputies/Deputy" + ID)).reduce("", String::concat);
+            String file = Files.lines(Paths.get(details.path + "/Deputies/Deputy" + ID)).reduce("", String::concat);
             return new JSONObject(file)
                     .getJSONObject("layers");
         } catch (IOException ex) {

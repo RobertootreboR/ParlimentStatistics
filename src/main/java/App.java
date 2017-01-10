@@ -1,3 +1,4 @@
+import Exceptions.InvalidDataFormatException;
 import org.json.JSONException;
 
 import java.io.FileNotFoundException;
@@ -6,6 +7,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.IntStream;
 
 /**
  * Created by robert on 15.12.16.
@@ -14,30 +16,31 @@ public class App {
     public static void main(String[] args) {
 
         try {
-            //final long startTime = System.currentTimeMillis();
+            final long startTime = System.currentTimeMillis();
             ParsingDetails details = new ArgumentParser().parseArguments(args);
 
             if (details.mode == ParsingDetails.Mode.UpdateData)
-                new DataDownloader().go(details.cadence);
+                new DataDownloader().go(details);
             else {
                 DeputyPersonalData deputyPersonalData = new DeputyPersonalData(details);
                 details.updateIDs(deputyPersonalData);
-                DeputyData deputyData = new DeputyData(deputyPersonalData);
+                DeputyData deputyData = new DeputyData(deputyPersonalData, details);
                 displayStats(details, deputyData, deputyPersonalData);
-                //final long endTime = System.currentTimeMillis();
-                //System.out.println(" at the end: " + (endTime- startTime));
+                final long endTime = System.currentTimeMillis();
+                System.out.println(" at the end: " + (endTime - startTime));
 
             }
-        } catch (IOException ex) {
-            System.out.println(ex );
-        } catch (JSONException ex ) {  //add something more in expensesdata and traveldata
-            System.out.println(ex);
+        } catch (IOException | JSONException ex) {
+            System.out.println(ex + ex.getMessage());
+            ex.printStackTrace();
         } catch (NumberFormatException ex) {
             System.out.println("first argument has to be a number. 7 or 8." + ex);
         } catch (IllegalArgumentException ex) {
-            System.out.println(ex);
+            ex.printStackTrace();
+            ex.getCause();
+        } catch (InvalidDataFormatException ex){
+            System.out.print(ex);
         }
-
 
     }
 
