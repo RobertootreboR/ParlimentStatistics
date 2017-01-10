@@ -1,8 +1,11 @@
 import org.json.JSONException;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by robert on 15.12.16.
@@ -11,59 +14,50 @@ public class App {
     public static void main(String[] args) {
 
         try {
-            final long startTime = System.currentTimeMillis();
+            //final long startTime = System.currentTimeMillis();
             ParsingDetails details = new ArgumentParser().parseArguments(args);
-            DeputyPersonalData deputyPersonalData = new DeputyPersonalData(details);
 
-            deputyPersonalData.deputies.forEach(System.out::println);
-            details.updateIDs(deputyPersonalData);
+            if (details.mode == ParsingDetails.Mode.UpdateData)
+                new DataDownloader().go(details.cadence);
+            else {
+                DeputyPersonalData deputyPersonalData = new DeputyPersonalData(details);
+                details.updateIDs(deputyPersonalData);
+                DeputyData deputyData = new DeputyData(deputyPersonalData);
+                displayStats(details, deputyData, deputyPersonalData);
+                //final long endTime = System.currentTimeMillis();
+                //System.out.println(" at the end: " + (endTime- startTime));
 
-            final long midlleTime = System.currentTimeMillis();
-            System.out.println("Total execution time: " + (midlleTime - startTime) );
-
-            System.out.println(deputyPersonalData.getDeputyID(deputyPersonalData.deputies.get(0).name));
-            System.out.println(deputyPersonalData.getDeputyID(deputyPersonalData.deputies.get(1).name));
-            DeputyData expensesData = new DeputyData(deputyPersonalData);
-            System.out.println(expensesData.deputyDataMap.get(1131));
-            final long endTime = System.currentTimeMillis();
-            System.out.println(" execution time normal: " + (endTime - midlleTime));
-
-
-
-            ExpensesStats exStats = new ExpensesStats(expensesData);
-            Double xx = 0.0;
-            System.out.println(exStats.getDeputyMinorFixesSum(details.minorFixesExpenses.ID));
-            System.out.println(exStats.getDeputyExpenseSum(details.expenseSum.ID));
-            System.out.println(exStats.getAverageExpenseSum());
-
-
-            System.out.println(expensesData.deputyDataMap.get(130).getJSONObject("wyjazdy").toString());
-            TravelsStats deputy =new TravelsStats(expensesData);
-            Integer podroznik = deputy.getMostForeignJourneysDeputyID();
-            System.out.println(deputyPersonalData.getDeputy(podroznik));
-            podroznik = deputy.getLongestJourneyDeputyID();
-            System.out.println(deputyPersonalData.getDeputy(podroznik));
-            podroznik = deputy.getMostExpensiveJourneyDeputyID();
-            System.out.println(deputyPersonalData.getDeputy(podroznik));
-            podroznik = deputy.getLongestAbroadDeputyID();
-            System.out.println(deputyPersonalData.getDeputy(podroznik));
-            List<Integer> italy = deputy.getWhoVisitedItaly();
-            italy.forEach(System.out::println);
-
-
-
+            }
         } catch (IOException ex) {
-            System.out.println(ex);
-        } catch (JSONException ex) {
+            System.out.println(ex );
+        } catch (JSONException ex ) {  //add something more in expensesdata and traveldata
             System.out.println(ex);
         } catch (NumberFormatException ex) {
-            System.out.println("first argument has to be a number. 7 or 8." +ex);
+            System.out.println("first argument has to be a number. 7 or 8." + ex);
         } catch (IllegalArgumentException ex) {
             System.out.println(ex);
         }
 
 
     }
+
+    private static void displayStats(ParsingDetails details, DeputyData data, DeputyPersonalData deputyPersonalData) {
+        ExpensesStats exStats = new ExpensesStats(data);
+        System.out.println(details.minorFixesExpenses + "-> spent " + exStats.getDeputyMinorFixesSum(details.minorFixesExpenses.ID) + " PLN on minor fixes");
+        System.out.println(details.expenseSum + "-> " + exStats.getDeputyExpenseSum(details.expenseSum.ID) + " PLN is the sum of his expenses");
+        System.out.println("Deputies spent on average " + exStats.getAverageExpenseSum() + " PLN");
+
+        TravelsStats trStats = new TravelsStats(data);
+        System.out.println(" trips-most foreign journeys. " + deputyPersonalData.getDeputy(trStats.getMostForeignJourneysDeputyID()));
+        System.out.println(" days -longest journey. " + deputyPersonalData.getDeputy(trStats.getLongestJourneyDeputyID()));
+        System.out.println(" Longest abroad: " + deputyPersonalData.getDeputy(trStats.getLongestAbroadDeputyID()));
+        System.out.println(" -most expensive Journey. " + deputyPersonalData.getDeputy(trStats.getMostExpensiveJourneyDeputyID()));
+        System.out.println("\nDeputies, who visited Italy:");
+        trStats.getWhoVisitedItaly().forEach(e -> System.out.println("\t" + deputyPersonalData.getDeputy(e)));
+    }
+
+
 }
+
 
 
