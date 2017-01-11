@@ -1,12 +1,9 @@
 import org.json.JSONArray;
 import org.json.JSONObject;
-
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.HashMap;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 /**
@@ -48,10 +45,9 @@ public class DeputyData {
         if (isWyjazdyArrayEmpty(deputyID))
             return 0;
         else {
-            Long journeys = getFromWyjazdyArrayAsStream("kraj", deputyID)
-                    .filter(country -> !country.equals("Polska"))
-                    .count();
-            return journeys.intValue();
+            return ((Long) getFromWyjazdyArrayAsStream("kraj", deputyID)
+                    .filter(country -> !country.equals("Polska"))           // count returns long. To obtain Integer I have to cast to
+                    .count()).intValue();                                   // Long and then take intValue
         }
     }
 

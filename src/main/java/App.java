@@ -51,10 +51,10 @@ public class App {
         System.out.println("Deputies spent on average " + exStats.getAverageExpenseSum() + " PLN");
 
         TravelsStats trStats = new TravelsStats(data);
-        System.out.println(" trips-most foreign journeys. " + deputyPersonalData.getDeputy(trStats.getMostForeignJourneysDeputyID()));
-        System.out.println(" days -longest journey. " + deputyPersonalData.getDeputy(trStats.getLongestJourneyDeputyID()));
-        System.out.println(" Longest abroad: " + deputyPersonalData.getDeputy(trStats.getLongestAbroadDeputyID()));
-        System.out.println(" -most expensive Journey. " + deputyPersonalData.getDeputy(trStats.getMostExpensiveJourneyDeputyID()));
+        System.out.println("Most foreign journeys. " + deputyPersonalData.getDeputy(trStats.getMostForeignJourneysDeputyID()));
+        System.out.println("longest journey. " + deputyPersonalData.getDeputy(trStats.getLongestJourneyDeputyID()));
+        System.out.println("Longest abroad: " + deputyPersonalData.getDeputy(trStats.getLongestAbroadDeputyID()));
+        System.out.println("Most expensive Journey. " + deputyPersonalData.getDeputy(trStats.getMostExpensiveJourneyDeputyID()));
         System.out.println("\nDeputies, who visited Italy:");
         trStats.getWhoVisitedItaly().forEach(e -> System.out.println("\t" + deputyPersonalData.getDeputy(e)));
     }
