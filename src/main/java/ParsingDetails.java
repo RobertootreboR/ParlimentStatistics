@@ -5,7 +5,6 @@ public class ParsingDetails {
     public enum Mode {
         Diplay,UpdateData
     }
-
     Deputy expenseSum;
     Deputy minorFixesExpenses;
     Integer cadence;

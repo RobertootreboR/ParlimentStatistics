@@ -1,7 +1,9 @@
+import com.sun.deploy.net.DownloadException;
 import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -45,7 +47,7 @@ public class DataDownloader {
                             , details.path + "/Deputies/Deputy" + deputy.ID);
                     chances = 0;
                 } catch (IOException ex) {
-                    if (--chances == 0) throw new IOException("Unable to save file with expenses!");
+                    if (--chances == 0) throw new DownloadException(new URL("https://api-v3.mojepanstwo.pl/dane/poslowie/" + deputy.ID + ".json?layers[]=wydatki&layers[]=wyjazdy"),"Problems occured while downloading expenses and travels");
                 }
             }
         }

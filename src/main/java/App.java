@@ -1,14 +1,8 @@
 import Exceptions.InvalidDataFormatException;
 import org.json.JSONException;
-
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.IntStream;
+
 
 /**
  * Created by robert on 15.12.16.
@@ -59,7 +53,6 @@ public class App {
         System.out.println("Most expensive Journey. " + deputyPersonalData.getDeputy(trStats.getMostExpensiveJourneyDeputyID()));
         System.out.println("\nDeputies, who visited Italy:");
         trStats.getWhoVisitedItaly().forEach(e -> System.out.println("\t" + deputyPersonalData.getDeputy(e)));
-        System.out.print(trStats.getWhoVisitedItaly().size());
 
     }
 
