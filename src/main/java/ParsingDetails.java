@@ -10,16 +10,19 @@ public class ParsingDetails {
     Deputy minorFixesExpenses;
     Integer cadence;
     Mode mode =Mode.Diplay;
+    String path;
 
-    public ParsingDetails(Deputy expenseSum, Deputy minorFixesExpenses, Integer cadence){
+    public ParsingDetails(Deputy expenseSum, Deputy minorFixesExpenses, Integer cadence, String path){
         this.expenseSum=expenseSum;
         this.minorFixesExpenses=minorFixesExpenses;
         this.cadence =cadence;
+        this.path = path;
     }
 
-    public ParsingDetails(Mode mode, Integer cadence) {
+    public ParsingDetails(Mode mode, Integer cadence, String path) {
         this.mode = mode;
         this.cadence =cadence;
+        this.path = path;
     }
 
     public void updateIDs(DeputyPersonalData deputyPersonalData) {

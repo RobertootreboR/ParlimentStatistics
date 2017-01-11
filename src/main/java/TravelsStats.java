@@ -1,5 +1,6 @@
 import java.util.List;
 import java.util.function.Function;
+import java.util.function.IntBinaryOperator;
 import java.util.stream.Collectors;
 
 /**
@@ -7,6 +8,16 @@ import java.util.stream.Collectors;
  */
 public class TravelsStats {
     private DeputyData travelData;
+
+    private class IDAndValue {
+        Integer ID;
+        Number value;
+
+        public IDAndValue(Integer ID, Number value) {
+            this.ID = ID;
+            this.value = value;
+        }
+    }
 
     TravelsStats(DeputyData data) {
         this.travelData = data;
@@ -24,33 +35,24 @@ public class TravelsStats {
         return getDeputyIDWithMost(deputyID -> travelData.daysAbroad(deputyID));
     }
 
-    private Integer getDeputyIDWithMost(Function<Integer, Integer> computation) {
-        Integer max = 0;
-        Integer maxID = 0;
-        for (Integer deputyID : travelData.deputyDataMap.keySet()) {
-            Integer tmp = computation.apply(deputyID);
-            if (tmp > max) {
-                maxID = deputyID;
-                max = tmp;
-            }
-        }
-        System.out.print("max: " + max + " ");
-        return maxID;
+    Integer getMostExpensiveJourneyDeputyID() {
+        return getDeputyIDWithMost(deputyID -> travelData.mostExpensiveJourney(deputyID));
     }
 
-    Integer getMostExpensiveJourneyDeputyID() {
-        Double max = 0.0;
-        Integer maxID = 0;
-        for (Integer deputyID : travelData.deputyDataMap.keySet()) {
-            Double tmp = travelData.mostExpensiveJourney(deputyID);
-            if (tmp > max) {
-                maxID = deputyID;
-                max = tmp;
-            }
-        }
-        System.out.print("max: " + max + " PLN ");
-        return maxID;
+    private Integer getDeputyIDWithMost(Function<Integer, Number> computation) {
+        return travelData.deputyDataMap.keySet()
+                .stream()
+                .map(deputyID -> new IDAndValue(deputyID, computation.apply(deputyID)))
+                .reduce(new IDAndValue(0, 0), TravelsStats::max)
+                .ID;
     }
+
+     private static IDAndValue max(IDAndValue idAndValue1, IDAndValue idAndValue2) {
+        if (idAndValue1.value.doubleValue() > idAndValue2.value.doubleValue())
+            return idAndValue1;
+        else return idAndValue2;
+    }
+
 
     List<Integer> getWhoVisitedItaly() {
         return travelData.deputyDataMap
