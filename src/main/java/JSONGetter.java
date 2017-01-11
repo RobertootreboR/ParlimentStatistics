@@ -8,7 +8,7 @@ import java.io.IOException;
  * Created by robert on 15.12.16.
  */
 public class JSONGetter {
-    String getJSON(String url) throws IOException {
+    static String getJSON(String url) throws IOException {
         Request request = new Request.Builder()
                 .url(url)
                 .build();

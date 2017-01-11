@@ -33,8 +33,7 @@ public class DataDownloader {
     }
 
     private void save(ParsingDetails details, Integer datasetNum) throws IOException {
-        String deputiesStr = new JSONGetter()
-                .getJSON("https://api-v3.mojepanstwo.pl/dane/poslowie.json?conditions[poslowie.kadencja]=" + details.cadence + "&_type=objects&page=" + datasetNum);
+        String deputiesStr = JSONGetter.getJSON("https://api-v3.mojepanstwo.pl/dane/poslowie.json?conditions[poslowie.kadencja]=" + details.cadence + "&_type=objects&page=" + datasetNum);
         DeputyPersonalData deputyPersonalData = new DeputyPersonalData(deputiesStr);
         saveToFile(deputiesStr, details.path + "/DeputyDataSets/DeputySet" + details.cadence + "_" + datasetNum);
 
@@ -42,7 +41,7 @@ public class DataDownloader {
             int chances = 5;
             while (chances > 0) {
                 try {
-                    saveToFile(new JSONGetter().getJSON("https://api-v3.mojepanstwo.pl/dane/poslowie/" + deputy.ID + ".json?layers[]=wydatki&layers[]=wyjazdy")
+                    saveToFile(JSONGetter.getJSON("https://api-v3.mojepanstwo.pl/dane/poslowie/" + deputy.ID + ".json?layers[]=wydatki&layers[]=wyjazdy")
                             , details.path + "/Deputies/Deputy" + deputy.ID);
                     chances = 0;
                 } catch (IOException ex) {
@@ -58,13 +57,13 @@ public class DataDownloader {
         writer.close();
     }
 
-    public static Integer getDatasetsNumber(ParsingDetails details) throws IOException {
+    static Integer getDatasetsNumber(ParsingDetails details) throws IOException {
         JSONObject object;
         if (details.mode == ParsingDetails.Mode.Diplay) {
             object = new JSONObject(
                     Files.lines(Paths.get(details.path + "/DeputyDataSets/DeputySet" + details.cadence + "_" + 1)).reduce("", String::concat));
         } else {
-            object = new JSONObject(new JSONGetter().getJSON("https://api-v3.mojepanstwo.pl/dane/poslowie.json?conditions[poslowie.kadencja]=" + details.cadence));
+            object = new JSONObject(JSONGetter.getJSON("https://api-v3.mojepanstwo.pl/dane/poslowie.json?conditions[poslowie.kadencja]=" + details.cadence));
         }
         String[] tmp = object
                 .getJSONObject("Links")

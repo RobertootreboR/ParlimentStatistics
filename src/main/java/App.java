@@ -3,6 +3,7 @@ import org.json.JSONException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -16,6 +17,7 @@ public class App {
     public static void main(String[] args) {
 
         try {
+
             final long startTime = System.currentTimeMillis();
             ParsingDetails details = new ArgumentParser().parseArguments(args);
 
@@ -48,7 +50,7 @@ public class App {
         ExpensesStats exStats = new ExpensesStats(data);
         System.out.println(details.minorFixesExpenses + "-> spent " + exStats.getDeputyMinorFixesSum(details.minorFixesExpenses.ID) + " PLN on minor fixes");
         System.out.println(details.expenseSum + "-> " + exStats.getDeputyExpenseSum(details.expenseSum.ID) + " PLN is the sum of his expenses");
-        System.out.println("Deputies spent on average " + exStats.getAverageExpenseSum() + " PLN");
+        System.out.println("Deputies spent on average " + new BigDecimal(exStats.getAverageExpenseSum()).setScale(2, BigDecimal.ROUND_HALF_UP) + " PLN");
 
         TravelsStats trStats = new TravelsStats(data);
         System.out.println("Most foreign journeys. " + deputyPersonalData.getDeputy(trStats.getMostForeignJourneysDeputyID()));
@@ -57,6 +59,8 @@ public class App {
         System.out.println("Most expensive Journey. " + deputyPersonalData.getDeputy(trStats.getMostExpensiveJourneyDeputyID()));
         System.out.println("\nDeputies, who visited Italy:");
         trStats.getWhoVisitedItaly().forEach(e -> System.out.println("\t" + deputyPersonalData.getDeputy(e)));
+        System.out.print(trStats.getWhoVisitedItaly().size());
+
     }
 
 
