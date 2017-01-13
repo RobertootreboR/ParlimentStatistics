@@ -1,6 +1,5 @@
 import Exceptions.InvalidDataFormatException;
 import org.json.JSONObject;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -41,7 +40,7 @@ public class DeputyPersonalData {
             JSONObject dep = (JSONObject) deputy;
             return dep.getString("slug");
         } catch (ClassCastException ex) {
-            throw new InvalidDataFormatException(deputy, getClass(), "External API (mojepanstwo.pl/api/sejmometr) returned invalid data format");
+            throw new InvalidDataFormatException(deputy, "External API (mojepanstwo.pl/api/sejmometr) returned invalid data format");
         }
     }
 
@@ -57,7 +56,7 @@ public class DeputyPersonalData {
             JSONObject dep = (JSONObject) deputy;
             return Integer.parseInt(dep.getString("id"));
         } catch (ClassCastException ex) {
-            throw new InvalidDataFormatException(deputy, getClass(), "External API (mojepanstwo.pl/api/sejmometr) returned invalid data format");
+            throw new InvalidDataFormatException(deputy, "External API (mojepanstwo.pl/api/sejmometr) returned invalid data format");
         }
     }
 

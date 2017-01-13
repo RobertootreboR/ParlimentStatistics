@@ -11,23 +11,6 @@ import java.util.stream.Stream;
  * Created by robert on 15.12.16.
  */
 public class DeputyData {
-    public abstract class Either<L,R> {
-        L leftValue;
-        R rightValue;
-    }
-
-    public class Left extends Either<Number,Stream<String>> {
-        public Left(Integer value) {
-            this.leftValue = value;
-        }
-    }
-
-    public class Right extends Either<Number, Stream<String>> {
-        public Right(Stream<String> stream) {
-            this.rightValue = stream;
-        }
-    }
-
     HashMap<Integer, JSONObject> deputyDataMap = new HashMap<>();
 
     DeputyData(DeputyPersonalData deputyPersonalData, ParsingDetails details) throws IOException {
@@ -57,16 +40,6 @@ public class DeputyData {
                 .get(deputyID)
                 .getJSONObject("wydatki")
                 .getJSONArray("punkty");
-    }
-
-    Integer numberOfJourneys(Integer deputyID) {
-        if (isWyjazdyArrayEmpty(deputyID))
-            return 0;
-        else {
-            return ((Long) getFromWyjazdyArrayAsStream("kraj", deputyID)
-                    .filter(country -> !country.equals("Polska"))           // count returns long. To obtain Integer I have to cast to
-                    .count()).intValue();                                   // Long and then take intValue
-        }
     }
 
     private boolean isWyjazdyArrayEmpty(Integer deputyID) {
@@ -103,6 +76,78 @@ public class DeputyData {
                         .orElseThrow(() -> new InvalidDataFormatException("No 'minor fixes' field found")));
     }
 
+    Integer numberOfJourneys(Integer deputyID) {
+        if (isWyjazdyArrayEmpty(deputyID))
+            return 0;
+        else {
+            return ((Long) getFromWyjazdyArrayAsStream("kraj", deputyID)
+                    .filter(country -> !country.equals("Polska"))           // count returns long. To obtain Integer I have to cast to
+                    .count()).intValue();                                   // Long and then take intValue
+        }
+    }
+
+
+   Integer longestJourneyDuration(Integer deputyID) {
+        if (isWyjazdyArrayEmpty(deputyID))
+            return 0;
+        else
+            return getFromWyjazdyArrayAsStream("liczba_dni", deputyID)
+                    .mapToInt(Integer::parseInt)
+                    .reduce(0, Integer::max);
+    }
+
+    Integer daysAbroad(Integer deputyID) {
+        if (isWyjazdyArrayEmpty(deputyID))
+            return 0;
+        else
+            return getFromWyjazdyArrayAsStream("liczba_dni", deputyID)
+                    .mapToInt(Integer::parseInt)
+                    .sum();
+    }
+
+    Double mostExpensiveJourney(Integer deputyID) {
+        if (isWyjazdyArrayEmpty(deputyID))
+            return 0.0;
+        else
+            return getFromWyjazdyArrayAsStream("koszt_suma", deputyID)
+                    .mapToDouble(Double::parseDouble)
+                    .reduce(0, Double::max);
+    }
+
+    boolean visitedItaly(Integer deputyID) {
+        return !isWyjazdyArrayEmpty(deputyID)
+                &&
+                getFromWyjazdyArrayAsStream("kraj", deputyID)
+                        .filter(country -> country.equals("Włochy"))
+                        .count() != 0;
+    }
+
+    private Stream<String> getFromWyjazdyArrayAsStream(String field, Integer deputyID) {
+        return getWyjazdyArray(deputyID)
+                .toList()
+                .stream()
+                .map(HashMap.class::cast)
+                .map(e -> e.get(field))
+                .map(String.class::cast);
+    }
+
+    /*public abstract class Either<L,R> {
+        L leftValue;
+        R rightValue;
+    }
+
+    public class Left extends Either<Number,Stream<String>> {
+        public Left(Integer value) {
+            this.leftValue = value;
+        }
+    }
+
+    public class Right extends Either<Number, Stream<String>> {
+        public Right(Stream<String> stream) {
+            this.rightValue = stream;
+        }
+    }
+
     Either<Number,Stream<String>> getFromWyjazdyArrayAsStreamIFArrayNotEmpty(String field, Integer deputyID){
         if (isWyjazdyArrayEmpty(deputyID))
             return new Left(0);
@@ -128,52 +173,9 @@ public class DeputyData {
         else return either.rightValue.mapToDouble(Double::parseDouble)
                 .reduce(0, Double::max);
 
-    }
-
-
-  /*  Integer longestJourneyDuration(Integer deputyID) {
-        if (isWyjazdyArrayEmpty(deputyID))
-            return 0;
-        else
-            return getFromWyjazdyArrayAsStream("liczba_dni", deputyID)
-                    .mapToInt(Integer::parseInt)
-                    .reduce(0, Integer::max);
-    }
-
-    Integer daysAbroad(Integer deputyID) {
-        if (isWyjazdyArrayEmpty(deputyID))
-            return 0;
-        else
-            return getFromWyjazdyArrayAsStream("liczba_dni", deputyID)
-                    .mapToInt(Integer::parseInt)
-                    .sum();
-    }
-
-    Double mostExpensiveJourney(Integer deputyID) {
-        if (isWyjazdyArrayEmpty(deputyID))
-            return 0.0;
-        else
-            return getFromWyjazdyArrayAsStream("koszt_suma", deputyID)
-                    .mapToDouble(Double::parseDouble)
-                    .reduce(0, Double::max);
     }*/
 
-    boolean visitedItaly(Integer deputyID) {
-        return !isWyjazdyArrayEmpty(deputyID)
-                &&
-                getFromWyjazdyArrayAsStream("kraj", deputyID)
-                        .filter(country -> country.equals("Włochy"))
-                        .count() != 0;
-    }
 
-    private Stream<String> getFromWyjazdyArrayAsStream(String field, Integer deputyID) {
-        return getWyjazdyArray(deputyID)
-                .toList()
-                .stream()
-                .map(HashMap.class::cast)
-                .map(e -> e.get(field))
-                .map(String.class::cast);
-    }
 
 
 }

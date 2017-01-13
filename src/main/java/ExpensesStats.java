@@ -37,6 +37,7 @@ public class ExpensesStats {
                 .sum()
                 / expensesData.deputyDataMap.size();
     }
+
 }
 
 

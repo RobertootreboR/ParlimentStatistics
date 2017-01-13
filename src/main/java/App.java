@@ -28,7 +28,6 @@ public class App {
             }
         } catch (IOException | JSONException ex) {
             System.out.println(ex + ex.getMessage());
-            ex.printStackTrace();
         } catch (NumberFormatException ex) {
             System.out.println("first argument has to be a number. 7 or 8." + ex);
         } catch (IllegalArgumentException ex) {
@@ -53,6 +52,7 @@ public class App {
         System.out.println("Most expensive Journey. " + deputyPersonalData.getDeputy(trStats.getMostExpensiveJourneyDeputyID()));
         System.out.println("\nDeputies, who visited Italy:");
         trStats.getWhoVisitedItaly().forEach(e -> System.out.println("\t" + deputyPersonalData.getDeputy(e)));
+
 
     }
 
